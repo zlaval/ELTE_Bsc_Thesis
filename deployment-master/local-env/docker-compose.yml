@@ -1,0 +1,49 @@
+version: '3'
+services:
+  mongo:
+    image: mongo:6.0.4
+    container_name: mongo-local
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+    ports:
+      - "27017:27017"
+  rabbit:
+    image: rabbitmq:3.11.10-management
+    container_name: rabbit-local
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+  zipkin:
+    image: openzipkin/zipkin:2
+    container_name: zipkin-local
+    restart: always
+    ports:
+      - "9411:9411"
+  spring-admin:
+    image: zalerix/spring-admin-3:3.1.0
+    container_name: spring-admin-local
+    restart: always
+    ports:
+      - "9115:8080"
+  postgres:
+    image: postgres:15.2-alpine3.17
+    container_name: postgres-local
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5432:5432"
+#  metabase:
+#    image: metabase/metabase
+#    container_name: metabase
+#    ports:
+#      - "3001:3000"
+

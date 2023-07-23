@@ -1,0 +1,24 @@
+management:
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
+spring:
+  liquibase:
+    enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: none
+  boot:
+    admin.client.url: http://spring-admin:8080
+  datasource:
+    url: jdbc:postgresql://postgres:5432/postgres
+  rabbitmq:
+    host: rabbit
+logging:
+  level:
+    net.ttddyy.dsproxy.listener: debug
+knowhere:
+  service:
+    enrollment: http://enrollment-service:8080
+    grade: http://grade-service:8080
+    quiz: http://quiz-service:8080

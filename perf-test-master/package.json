@@ -1,0 +1,14 @@
+{
+  "name": "perf-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "hw-test.js",
+  "scripts": {
+    "test": "k6 run student-get-subjects.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/k6": "^0.43.2"
+  }
+}

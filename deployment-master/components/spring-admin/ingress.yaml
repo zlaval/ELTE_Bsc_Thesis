@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-to-spring-admin
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /spring-admin
+            pathType: Prefix
+            backend:
+              service:
+                name: spring-admin-url
+                port:
+                  number: 8080
+  ingressClassName: nginx

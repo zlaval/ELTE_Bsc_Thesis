@@ -1,0 +1,13 @@
+@import url('@fortawesome/fontawesome-free/css/all.css');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.v-timeline-item__body {
+    justify-self: auto !important;
+    width: 100% !important;
+}
+
+.page-title {
+    @apply text-3xl font-semibold text-center text-blue-700 mt-5 mb-5
+}

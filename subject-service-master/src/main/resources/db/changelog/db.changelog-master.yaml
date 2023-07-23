@@ -1,0 +1,269 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1677019182969-1
+      author: zlaval
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: lesson_pkey
+                  name: id
+                  type: VARCHAR(255)
+              - column:
+                  name: created_at
+                  type: TIMESTAMP WITH TIME ZONE
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_at
+                  type: TIMESTAMP WITH TIME ZONE
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: tenant_id
+                  type: VARCHAR(255)
+              - column:
+                  name: version
+                  type: BIGINT
+              - column:
+                  name: dead_line
+                  type: TIMESTAMP WITH TIME ZONE
+              - column:
+                  constraints:
+                    nullable: false
+                  name: deleted
+                  type: BOOLEAN
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: quiz_id
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: video_id
+                  type: VARCHAR(255)
+              - column:
+                  name: subject_id
+                  type: VARCHAR(255)
+            tableName: lesson
+  - changeSet:
+      id: 1677019182969-2
+      author: zlaval
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: subject_pkey
+                  name: id
+                  type: VARCHAR(255)
+              - column:
+                  name: created_at
+                  type: TIMESTAMP WITH TIME ZONE
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_at
+                  type: TIMESTAMP WITH TIME ZONE
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: tenant_id
+                  type: VARCHAR(255)
+              - column:
+                  name: version
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: archive
+                  type: BOOLEAN
+              - column:
+                  name: cover_image_path
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: credit
+                  type: INTEGER
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+              - column:
+                  name: end_dt
+                  type: TIMESTAMP WITH TIME ZONE
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: published
+                  type: BOOLEAN
+              - column:
+                  constraints:
+                    nullable: false
+                  name: seats
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: start_dt
+                  type: TIMESTAMP WITH TIME ZONE
+            tableName: subject
+  - changeSet:
+      id: 1677019182969-3
+      author: zlaval
+      changes:
+        - createIndex:
+            columns:
+              - column:
+                  name: tenant_id
+            indexName: idxdb7usldteo32h8pgh10cfhgdt
+            tableName: lesson
+  - changeSet:
+      id: 1677019182969-4
+      author: zlaval
+      changes:
+        - createIndex:
+            columns:
+              - column:
+                  name: tenant_id
+            indexName: idxq22db2dvf6otkk9co297jyhot
+            tableName: subject
+  - changeSet:
+      id: 1677019182969-5
+      author: zlaval
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: subject_id
+            baseTableName: lesson
+            constraintName: fkd0en7by0f4yltpa347429oqc5
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+            referencedColumnNames: id
+            referencedTableName: subject
+            validate: true
+
+  - changeSet:
+      id: 202301180007-01
+      author: zlaval
+      changes:
+        loadData:
+          tableName: subject
+          file: db/changelog/migration/subjects.csv
+          encoding: UTF-8
+          separator: ","
+  - changeSet:
+      id: 202302251822-01
+      author: zlaval
+      changes:
+        - addColumn:
+            tableName: lesson
+            columns:
+              - column:
+                  name: order
+                  type: int
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 202302251822-02
+      author: zlaval
+      changes:
+        - addColumn:
+            tableName: lesson
+            columns:
+              - column:
+                  name: archive
+                  type: boolean
+                  constraints:
+                    nullable: false
+        - dropColumn:
+            tableName: lesson
+            columns:
+              - column:
+                  name: deleted
+  - changeSet:
+      id: 202302251822-03
+      author: zlaval
+      changes:
+        loadData:
+          tableName: lesson
+          file: db/changelog/migration/lessons.csv
+          encoding: UTF-8
+          separator: ","
+  - changeSet:
+      id: 202303020100-01
+      author: zlaval
+      changes:
+        - renameColumn:
+            tableName: lesson
+            oldColumnName: order
+            newColumnName: lesson_order
+  - changeSet:
+      id: 202303032300-01
+      author: zlaval
+      changes:
+        - modifyDataType:
+            tableName: lesson
+            columnName: description
+            newDataType: text
+        - modifyDataType:
+            tableName: subject
+            columnName: description
+            newDataType: text
+
+  - changeSet:
+      id: 2023031212000-01
+      author: zlaval
+      changes:
+        - createTable:
+            tableName: shedlock
+            columns:
+              - column:
+                  name: name
+                  type: VARCHAR(64)
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: lock_until
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: locked_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: locked_by
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false

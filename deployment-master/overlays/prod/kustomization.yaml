@@ -1,0 +1,34 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+commonLabels:
+  environment: production
+
+resources:
+  - ../../base
+  - ./volume.yaml
+  - ./volume-claim.yaml
+
+components:
+  - ../../components/zipkin
+  - ../../components/mongodb
+  - ../../components/rabbitmq
+  - ../../components/spring-admin
+  - ../../components/postgres
+
+patchesStrategicMerge:
+  - auth-service/deployment-patch.yaml
+  - subject-service/deployment-patch.yaml
+  - subject-service/hpa-patch.yaml
+  - video-service/deployment-patch.yaml
+  - postgres/deployment-patch.yaml
+  - mongo/deployment-patch.yaml
+
+configMapGenerator:
+  - name: common-properties
+    envs:
+      - environments.properties
+
+secretGenerator:
+  - name: common-secrets
+    envs:
+      - secrets.properties

@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: video-store-pv
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 15Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  claimRef:
+    name: video-store-pvc
+    namespace: default
+  hostPath:
+    path: "/data/knowhere_store/video"
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: subject-store-pv
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 300Mi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  claimRef:
+    name: subject-store-pvc
+    namespace: default
+  hostPath:
+    path: "/data/knowhere_store/subject"
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: auth-store-pv
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 300Mi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  claimRef:
+    name: auth-store-pvc
+    namespace: default
+  hostPath:
+    path: "/data/knowhere_store/auth"
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mongo-pv
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 300Mi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  claimRef:
+    name: mongo-pvc
+    namespace: default
+  hostPath:
+    path: "/data/mongo"
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-pv
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 300Mi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  claimRef:
+    name: postgres-pvc
+    namespace: default
+  hostPath:
+    path: "/data/postgres"

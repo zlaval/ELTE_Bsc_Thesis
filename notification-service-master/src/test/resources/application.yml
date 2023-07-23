@@ -1,0 +1,15 @@
+spring:
+  boot:
+    admin:
+      client:
+        enabled: false
+  data:
+    mongodb:
+      database: notification
+management:
+  tracing:
+    enabled: false
+jwt:
+  secret-key: aklsdh983zrhalfnb;iou*rqw/234>asdfa
+mongock:
+  enabled: false

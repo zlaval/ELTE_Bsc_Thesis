@@ -1,0 +1,21 @@
+spring:
+  boot:
+    admin:
+      client:
+        enabled: false
+  data:
+    mongodb:
+      database: grade
+  rabbitmq:
+    host: localhost
+management:
+  tracing:
+    enabled: false
+jwt:
+  secret-key: aklsdh983zrhalfnb;iou*rqw/234>asdfa
+mongock:
+  enabled: false
+knowhere:
+  service:
+    auth: http://localhost
+    subject: http://localhost

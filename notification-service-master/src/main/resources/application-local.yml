@@ -1,0 +1,19 @@
+management:
+  server:
+    port: 9008
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+spring:
+  boot:
+    admin.client.url: http://localhost:9115
+  data:
+    mongodb:
+      uri: mongodb://admin:admin123@localhost:27017
+  rabbitmq:
+    host: localhost
+server:
+  port: 8008
+logging:
+  level:
+    org.springframework.data.mongodb.core.MongoTemplate: debug

@@ -1,0 +1,182 @@
+version: '3'
+services:
+  mongo:
+    image: mongo:6.0.4
+    container_name: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+  rabbit:
+    image: rabbitmq:3.11.10-management
+    container_name: rabbit
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123
+    ports:
+      - "10005:15672"
+  zipkin:
+    image: openzipkin/zipkin:2
+    container_name: zipkin
+    restart: always
+    ports:
+      - "10004:9411"
+  spring-admin:
+    image: zalerix/spring-admin-3:3.1.0
+    container_name: spring-admin
+    restart: always
+    environment:
+      SERVER_TOMCAT_THREADS_MAX: 2
+      SPRING_TASK_SCHEDULING_POOL_SIZE: 1
+      SPRING_TASK_EXECUTION_POOL_MAXSIZE: 2
+      SPRING_TASK_EXECUTION_POOL_CORESIZE: 1
+      SPRING_DATASOURCE_HIKARI_MAXIMUMPOOLSIZE: 2
+    ports:
+      - "10003:8080"
+  postgres:
+    image: postgres:15.2-alpine3.17
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: admin123
+  api-gateway:
+    image: zalerix/thesis-api-gateway:latest
+    container_name: api-gateway
+    restart: always
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SERVER_TOMCAT_THREADS_MAX: 2
+      SPRING_TASK_SCHEDULING_POOL_SIZE: 1
+      SPRING_TASK_EXECUTION_POOL_MAXSIZE: 2
+      SPRING_TASK_EXECUTION_POOL_CORESIZE: 1
+      SPRING_DATASOURCE_HIKARI_MAXIMUMPOOLSIZE: 2
+    ports:
+      - "10001:8080"
+      - "10002:9000"
+  frontend:
+    image: zalerix/thesis-knowhere-vui:latest
+    container_name: frontend
+    restart: always
+    ports:
+      - "10000:80"
+  video-service:
+    depends_on:
+      mongo:
+        condition: service_started
+    image: zalerix/thesis-video-service:latest
+    container_name: video-service
+    restart: always
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SERVER_TOMCAT_THREADS_MAX: 2
+      SPRING_TASK_SCHEDULING_POOL_SIZE: 1
+      SPRING_TASK_EXECUTION_POOL_MAXSIZE: 2
+      SPRING_TASK_EXECUTION_POOL_CORESIZE: 1
+      SPRING_DATASOURCE_HIKARI_MAXIMUMPOOLSIZE: 2
+  grade-service:
+    depends_on:
+      mongo:
+        condition: service_started
+      rabbit:
+        condition: service_started
+    image: zalerix/thesis-grade-service:latest
+    container_name: grade-service
+    restart: always
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SERVER_TOMCAT_THREADS_MAX: 2
+      SPRING_TASK_SCHEDULING_POOL_SIZE: 1
+      SPRING_TASK_EXECUTION_POOL_MAXSIZE: 2
+      SPRING_TASK_EXECUTION_POOL_CORESIZE: 1
+      SPRING_DATASOURCE_HIKARI_MAXIMUMPOOLSIZE: 2
+  auth-service:
+    depends_on:
+      mongo:
+        condition: service_started
+      grade-service:
+        condition: service_started
+    image: zalerix/thesis-auth-service:latest
+    container_name: auth-service
+    restart: always
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SERVER_TOMCAT_THREADS_MAX: 2
+      SPRING_TASK_SCHEDULING_POOL_SIZE: 1
+      SPRING_TASK_EXECUTION_POOL_MAXSIZE: 2
+      SPRING_TASK_EXECUTION_POOL_CORESIZE: 1
+      SPRING_DATASOURCE_HIKARI_MAXIMUMPOOLSIZE: 2
+  enrollment-service:
+    depends_on:
+      mongo:
+        condition: service_started
+      rabbit:
+        condition: service_started
+      grade-service:
+        condition: service_started
+    image: zalerix/thesis-enrollment-service:latest
+    container_name: enrollment-service
+    restart: always
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SERVER_TOMCAT_THREADS_MAX: 2
+      SPRING_TASK_SCHEDULING_POOL_SIZE: 1
+      SPRING_TASK_EXECUTION_POOL_MAXSIZE: 2
+      SPRING_TASK_EXECUTION_POOL_CORESIZE: 1
+      SPRING_DATASOURCE_HIKARI_MAXIMUMPOOLSIZE: 2
+  subject-service:
+    depends_on:
+      rabbit:
+        condition: service_started
+      postgres:
+        condition: service_started
+      enrollment-service:
+        condition: service_started
+    image: zalerix/thesis-subject-service:latest
+    container_name: subject-service
+    restart: always
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SERVER_TOMCAT_THREADS_MAX: 2
+      SPRING_TASK_SCHEDULING_POOL_SIZE: 1
+      SPRING_TASK_EXECUTION_POOL_MAXSIZE: 2
+      SPRING_TASK_EXECUTION_POOL_CORESIZE: 1
+      SPRING_DATASOURCE_HIKARI_MAXIMUMPOOLSIZE: 2
+  quiz-service:
+    depends_on:
+      mongo:
+        condition: service_started
+      rabbit:
+        condition: service_started
+      enrollment-service:
+        condition: service_started
+    image: zalerix/thesis-quiz-service:latest
+    container_name: quiz-service
+    restart: always
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SERVER_TOMCAT_THREADS_MAX: 2
+      SPRING_TASK_SCHEDULING_POOL_SIZE: 1
+      SPRING_TASK_EXECUTION_POOL_MAXSIZE: 2
+      SPRING_TASK_EXECUTION_POOL_CORESIZE: 1
+      SPRING_DATASOURCE_HIKARI_MAXIMUMPOOLSIZE: 2
+  notification-service:
+    depends_on:
+      mongo:
+        condition: service_started
+      rabbit:
+        condition: service_started
+      quiz-service:
+        condition: service_started
+    image: zalerix/thesis-notification-service:latest
+    container_name: notification-service
+    restart: always
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SERVER_TOMCAT_THREADS_MAX: 2
+      SPRING_TASK_SCHEDULING_POOL_SIZE: 1
+      SPRING_TASK_EXECUTION_POOL_MAXSIZE: 2
+      SPRING_TASK_EXECUTION_POOL_CORESIZE: 1
+      SPRING_DATASOURCE_HIKARI_MAXIMUMPOOLSIZE: 2

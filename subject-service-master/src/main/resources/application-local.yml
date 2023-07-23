@@ -1,0 +1,28 @@
+management:
+  server:
+    port: 9004
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+spring:
+  liquibase:
+    enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: none
+  boot:
+    admin.client.url: http://localhost:9115
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+  rabbitmq:
+    host: localhost
+server:
+  port: 8004
+logging:
+  level:
+    net.ttddyy.dsproxy.listener: debug
+knowhere:
+  service:
+    enrollment: http://localhost:8007
+    grade: http://localhost:8006
+    quiz: http://localhost:8005

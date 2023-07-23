@@ -1,0 +1,16 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: subject-service-deployment
+spec:
+  template:
+    spec:
+      containers:
+        - name: subject-service
+          volumeMounts:
+            - mountPath: /data
+              name: subject-store
+      volumes:
+        - name: subject-store
+          persistentVolumeClaim:
+            claimName: subject-store-pvc

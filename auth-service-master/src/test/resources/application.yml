@@ -1,0 +1,16 @@
+spring:
+  boot:
+    admin:
+      client:
+        enabled: false
+  data:
+    mongodb:
+      database: auth
+management:
+  tracing:
+    enabled: false
+jwt:
+  secret-key: aklsdh983zrhalfnb;iou*rqw/234>asdfa
+  validity-in-minutes: 15
+mongock:
+  enabled: false

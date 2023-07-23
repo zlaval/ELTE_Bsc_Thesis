@@ -1,0 +1,59 @@
+management.zipkin.tracing.endpoint: http://localhost:9411/api/v2/spans
+server:
+  port: 8000
+spring:
+  boot:
+    admin.client.url: http://localhost:9115
+  cloud:
+    gateway:
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:8080,http://localhost:3000"
+            allowedHeaders: "*"
+            allowedMethods: "*"
+            allowCredentials: true
+      routes:
+        - id: video-route
+          uri: http://localhost:8001
+          predicates:
+            - Path=/video/**
+          filters:
+            - RewritePath=/video/?(?<segment>.*), /$\{segment}
+        - id: auth-route
+          uri: http://localhost:8003
+          predicates:
+            - Path=/auth/**
+          filters:
+            - RewritePath=/auth/?(?<segment>.*), /$\{segment}
+        - id: subject-route
+          uri: http://localhost:8004
+          predicates:
+            - Path=/subject/**
+          filters:
+            - RewritePath=/subject/?(?<segment>.*), /$\{segment}
+        - id: quiz-route
+          uri: http://localhost:8005
+          predicates:
+            - Path=/quiz/**
+          filters:
+            - RewritePath=/quiz/?(?<segment>.*), /$\{segment}
+        - id: grade-route
+          uri: http://localhost:8006
+          predicates:
+            - Path=/grade/**
+          filters:
+            - RewritePath=/grade/?(?<segment>.*), /$\{segment}
+        - id: enrollment-route
+          uri: http://localhost:8007
+          predicates:
+            - Path=/enrollment/**
+          filters:
+            - RewritePath=/enrollment/?(?<segment>.*), /$\{segment}
+        - id: notification-route
+          uri: http://localhost:8008
+          predicates:
+            - Path=/notification/**
+          filters:
+            - RewritePath=/notification/?(?<segment>.*), /$\{segment}

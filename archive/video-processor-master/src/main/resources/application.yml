@@ -1,0 +1,71 @@
+management:
+  server:
+    port: 9000
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+    binders:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+    tags:
+      application: video-processor
+    enable:
+      all: true
+  tracing:
+    enabled: true
+    baggage:
+      enabled: true
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://zipkin-url:9411/api/v2/spans
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+  level:
+    root: info
+server:
+  shutdown: graceful
+spring:
+  boot:
+    admin.client.url: http://spring-admin-url:8080
+  application:
+    name: video-processor
+  rabbitmq:
+    host: rabbitmq-url
+    port: 5672
+    username: admin
+    password: admin123
+  cloud:
+    stream:
+      function:
+        definition: consumeMetadata
+      bindings:
+        consumeMetadata-in-0:
+          group: video-metadata-group
+          destination: video.metadata.exchange
+      rabbit:
+        bindings:
+          consumeMetadata-in-0:
+            consumer:
+              bindingRoutingKey: video_meta
+              exchangeType: direct
+              exchangeAutoDelete: false
+
+

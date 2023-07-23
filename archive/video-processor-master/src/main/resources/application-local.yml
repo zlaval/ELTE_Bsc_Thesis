@@ -1,0 +1,12 @@
+management:
+  server:
+    port: 9004
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+spring:
+  boot:
+    admin.client.url: http://localhost:9005
+  rabbitmq:
+    host: localhost
+server.port: 8004

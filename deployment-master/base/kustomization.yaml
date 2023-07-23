@@ -1,0 +1,62 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- api-gateway/deployment.yaml
+- api-gateway/cluster-ip.yaml
+- api-gateway/ingress.yaml
+- api-gateway/hpa.yaml
+- auth-service/deployment.yaml
+- auth-service/cluster-ip.yaml
+- auth-service/hpa.yaml
+- video-service/deployment.yaml
+- video-service/cluster-ip.yaml
+- video-service/hpa.yaml
+- enrollment-service/deployment.yaml
+- enrollment-service/hpa.yaml
+- enrollment-service/cluster-ip.yaml
+- grade-service/deployment.yaml
+- grade-service/hpa.yaml
+- grade-service/cluster-ip.yaml
+- notification-service/deployment.yaml
+- notification-service/hpa.yaml
+- notification-service/cluster-ip.yaml
+- quiz-service/deployment.yaml
+- quiz-service/hpa.yaml
+- quiz-service/cluster-ip.yaml
+- subject-service/deployment.yaml
+- subject-service/hpa.yaml
+- subject-service/cluster-ip.yaml
+- knowhere-ui/deployment.yaml
+- knowhere-ui/cluster-ip.yaml
+- knowhere-ui/hpa.yaml
+- knowhere-ui/ingress.yaml
+
+images:
+- name: zalerix/thesis-api-gateway:latest
+  newName: zalerix/thesis-api-gateway
+  newTag: 1.33.0
+- name: zalerix/thesis-auth-service:latest
+  newName: zalerix/thesis-auth-service
+  newTag: 1.42.0
+- name: zalerix/thesis-enrollment-service:latest
+  newName: zalerix/thesis-enrollment-service
+  newTag: 1.20.0
+- name: zalerix/thesis-grade-service:latest
+  newName: zalerix/thesis-grade-service
+  newTag: 1.30.0
+- name: zalerix/thesis-knowhere-vui:latest
+  newName: zalerix/thesis-knowhere-vui
+  newTag: 1.112.0
+- name: zalerix/thesis-notification-service:latest
+  newName: zalerix/thesis-notification-service
+  newTag: 1.12.0
+- name: zalerix/thesis-quiz-service:latest
+  newName: zalerix/thesis-quiz-service
+  newTag: 1.35.0
+- name: zalerix/thesis-subject-service:latest
+  newName: zalerix/thesis-subject-service
+  newTag: 1.51.0
+- name: zalerix/thesis-video-service:latest
+  newName: zalerix/thesis-video-service
+  newTag: 1.37.0

@@ -1,0 +1,7 @@
+id,created_by,tenant_id,version,dead_line,description,name,quiz_id,video_id,subject_id,order,archive
+1,1,1,0,2023-09-10 10:00:00,A Java nyelv beépített típusai,Típusok,1,1,1,1,false
+2,1,1,0,2023-10-10 10:00:00,Saját típusok készítése és beépített általános típusok,Generikusok,1,1,1,2,false
+3,1,1,0,2023-11-10 10:00:00,Minden amit a szemétgyűjtésről tudni kell,Memóriakezelés,1,1,1,3,false
+4,1,1,0,2023-11-10 12:00:00,Sorozat elemeinek konvergenciája,Konvergencia,1,1,3,1,false
+
+

@@ -1,0 +1,12 @@
+management:
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
+spring:
+  boot:
+    admin.client.url: http://spring-admin:8080
+  data:
+    mongodb:
+      uri: mongodb://admin:admin123@mongo:27017
+jwt:
+  validity-in-minutes: 10000

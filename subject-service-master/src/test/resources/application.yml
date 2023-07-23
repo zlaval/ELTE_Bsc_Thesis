@@ -1,0 +1,22 @@
+spring:
+  liquibase:
+    enabled: false
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
+  boot:
+    admin:
+      client:
+        enabled: false
+knowhere:
+  service:
+    enrollment: http://enrollment-service-url:8080
+    grade: http://grade-service-url:8080
+    quiz: http://quiz-service-url:8080
+    scheduling:
+      enabled: false
+jwt:
+  secret-key: aklsdh983zrhalfnb;iou*rqw/234>asdfa
+

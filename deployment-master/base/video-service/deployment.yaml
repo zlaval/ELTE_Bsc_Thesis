@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: video-service-deployment
+spec:
+  selector:
+    matchLabels:
+      name: video-service
+  template:
+    metadata:
+      labels:
+        name: video-service
+    spec:
+      containers:
+        - name: video-service
+          image: zalerix/thesis-video-service:latest
+          livenessProbe:
+            initialDelaySeconds: 10
+            httpGet:
+              port: 9000
+              path: /actuator/health/liveness
+          readinessProbe:
+            initialDelaySeconds: 10
+            httpGet:
+              port: 9000
+              path: /actuator/health/readiness
+          lifecycle:
+            preStop:
+              exec:
+                command: [ "sh", "-c", "sleep 5" ]
+          resources:
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
+            requests:
+              cpu: "1000m"
+              memory: "1Gi"
+          ports:
+            - containerPort: 8080
+              name: app-port
+            - containerPort: 9000
+              name: actuator-port
+          envFrom:
+            - configMapRef:
+                name: common-properties
+            - secretRef:
+                name: common-secrets

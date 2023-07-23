@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-admin-deployment
+spec:
+  selector:
+    matchLabels:
+      name: spring-admin
+  template:
+    metadata:
+      labels:
+        name: spring-admin
+    spec:
+      containers:
+        - name: spring-admin
+          image: zalerix/spring-admin-3:3.1.0
+          livenessProbe:
+            initialDelaySeconds: 5
+            failureThreshold: 5
+            httpGet:
+              port: 8080
+              path: /spring-admin
+          readinessProbe:
+            initialDelaySeconds: 10
+            failureThreshold: 5
+            httpGet:
+              port: 8080
+              path: /spring-admin
+          resources:
+            limits:
+              cpu: "700m"
+              memory: "512Mi"
+            requests:
+              cpu: "400m"
+              memory: "512Mi"
+          ports:
+            - containerPort: 8080
+              name: app-port

@@ -1,0 +1,118 @@
+name: build-image
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+  checks: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: 'master'
+      - uses: actions/setup-java@v3
+        with:
+          distribution: corretto
+          java-version: 17
+      - name: Run Gradle Test
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: 7.5.1
+          arguments: clean test
+      - name: Report Tests
+        id: jacoco_reporter
+        uses: PavanMudigonda/jacoco-reporter@v4.8
+        if: success() || failure()
+        with:
+          coverage_results_path: build/reports/jacoco/test/jacocoTestReport.xml
+          coverage_report_title: Subject Service Test Result
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          skip_check_run: false
+          minimum_coverage: 0
+          fail_below_threshold: false
+          publish_only_summary: false
+      - name: Add Coverage Job Summary
+        run: echo "${{ steps.jacoco_reporter.outputs.coverageSummary }}" >> $GITHUB_STEP_SUMMARY
+  semantic-release:
+    needs:
+      - test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: npm
+      - uses: actions/setup-java@v3
+        with:
+          distribution: corretto
+          java-version: 17
+      - name: Run Semantic Release
+        run: |
+          npm ci
+          npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+  release:
+    needs:
+      - semantic-release
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_USER: ${{secrets.DOCKER_USER}}
+      DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: 'master'
+      - uses: actions/setup-java@v3
+        with:
+          distribution: corretto
+          java-version: 17
+      - name: Run Gradle Jib
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: 7.5.1
+          arguments: jib
+  update-kustomize:
+    needs:
+      - release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: 'master'
+      - name: Get version
+        run: |
+          file="./gradle.properties"
+          value=$(grep version ${file} | cut -d' ' -f3)
+          echo "app_version=$value" >> $GITHUB_ENV
+      - name: Checkout Kustomize
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT }}
+          repository: zlaval-elte-thesis/deployment
+          ref: master
+      - name: Set Image
+        uses: stefanprodan/kube-tools@v1
+        with:
+          kubectl: 1.24.0
+          kustomize: 4.5.4
+          command: |
+            cd base
+            kustomize edit set image zalerix/thesis-subject-service:latest=zalerix/thesis-subject-service:${{ env.app_version }}
+            git config --global user.email "zlaval@gmail.com"
+            git config --global user.name "CI bot"
+            git add .
+            git commit -m "build: update subject-service image tag to ${{ env.app_version }}"
+            git push

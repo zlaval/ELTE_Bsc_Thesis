@@ -1,0 +1,76 @@
+management:
+  server:
+    port: 9000
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+    binders:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+    tags:
+      application: enrollment-service
+    enable:
+      all: true
+  tracing:
+    enabled: true
+    baggage:
+      enabled: true
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://zipkin-url:9411/api/v2/spans
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},tenant_id=%mdc{tenantId} trace_id=%mdc{traceId} span_id=%mdc{spanId}]"
+  level:
+    root: info
+server:
+  shutdown: graceful
+spring:
+  boot:
+    admin.client.url: http://spring-admin-url:8080
+  application:
+    name: enrollment-service
+  jackson:
+    mapper:
+      default-view-inclusion: true
+  jmx:
+    enabled: false
+  data:
+    mongodb:
+      uri: mongodb://admin:admin123@mongodb-url:27017
+      database: enrollment
+      auto-index-creation: true
+  rabbitmq:
+    username: admin
+    password: admin123
+    host: rabbitmq-url
+    port: 5672
+jwt:
+  secret-key: aklsdh983zrhalfnb;iou*rqw/234>asdfa
+mongock:
+  enabled: false
+resilience4j:
+  circuitbreaker:
+    instances:
+      auth:
+        registerHealthIndicator: true
+knowhere:
+  service:
+    auth: http://auth-service-url:8080
+
+

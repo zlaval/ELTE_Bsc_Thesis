@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: spring-admin-3
+  boot:
+    admin:
+      context-path: spring-admin

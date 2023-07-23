@@ -1,0 +1,4 @@
+id,created_by,tenant_id,archive,credit,description,name,published,seats,start_dt,version
+1,1,1,false,5,Programozás Java nyelven,Haladó Java,true,5,2023-01-10 10:00:00,0
+2,1,1,false,6,Objektum orientált programozás,Objektum elvű programozás,false,15,2023-01-01 10:00:00,0
+3,1,1,false,3,Függvények elemzése,Analízis,true,150,2023-03-01 10:00:00,0

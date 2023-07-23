@@ -1,0 +1,76 @@
+name: Master merge workflow
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+
+jobs:
+  semantic-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: npm
+      - name: Run Semantic Release
+        run: |
+          npm ci
+          npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+  release:
+    needs:
+      - semantic-release
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_USER: ${{secrets.DOCKER_USER}}
+      DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: 'master'
+      - name: Run Gradle Test
+        uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
+        with:
+          arguments: jib
+  update-kustomize:
+    needs:
+      - release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: 'master'
+      - name: Get version
+        run: |
+          file="./gradle.properties"
+          value=$(grep version ${file} | cut -d' ' -f3)
+          echo "app_version=$value" >> $GITHUB_ENV
+      - name: Checkout Kustomize
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT }}
+          repository: zlaval-elte-thesis/deployment
+          ref: master
+      - name: Set Image
+        uses: stefanprodan/kube-tools@v1
+        with:
+          kubectl: 1.24.0
+          kustomize: 4.5.4
+          command: |
+            cd base
+            kustomize edit set image zalerix/thesis-user-service:latest=zalerix/thesis-user-service:${{ env.app_version }}
+            git config --global user.email "zlaval@gmail.com"
+            git config --global user.name "CI bot"
+            git add .
+            git commit -m "build: update user-service image tag to ${{ env.app_version }}"
+            git push

@@ -1,0 +1,53 @@
+micronaut:
+  application:
+    name: user-service
+  router:
+    versioning:
+      enabled: true
+      header:
+        enabled: true
+      default-version: 1
+  metrics:
+    enabled: true
+    export:
+      datadog:
+        enabled: true
+        step: PT1M
+        apiKey: 03e4eea3cce22243935b6dc7f85d8c5e
+        descriptions: false
+  security:
+    token:
+      jwt:
+        signatures:
+          secret:
+            generator:
+              secret: '"${JWT_GENERATOR_SIGNATURE_SECRET:from_k8s_secret_please_override_this}"'
+    authentication: bearer
+netty:
+  default:
+    allocator:
+      max-order: 3
+tracing:
+  zipkin:
+    enabled: '${ENABLE_ZIPKIN:false}'
+    trace-id128-bit: true
+    sampler:
+      probability: 1
+    http:
+      url: '${ZIPKIN_URL:http://zipkin-url:9411}'
+    local-service-name: user-service
+  exclusions:
+    - /health
+    - actuator
+endpoints:
+  info:
+    enabled: true
+    sensitive: false
+  health:
+    enabled: true
+    sensitive: false
+  all:
+    port: 9000
+    path: actuator
+
+

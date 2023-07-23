@@ -1,0 +1,93 @@
+management:
+  server:
+    port: 9000
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+    binders:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+    tags:
+      application: video-service
+    enable:
+      all: true
+  tracing:
+    enabled: true
+    baggage:
+      enabled: true
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://zipkin-url:9411/api/v2/spans
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},tenant_id=%mdc{tenantId} trace_id=%mdc{traceId} span_id=%mdc{spanId}]"
+  level:
+    root: info
+server:
+  shutdown: graceful
+jwt:
+  secret-key: aklsdh983zrhalfnb;iou*rqw/234>asdfa
+mongock:
+  enabled: false
+spring:
+  servlet:
+    multipart:
+      max-file-size: 2000MB
+      max-request-size: 2001MB
+  boot:
+    admin.client.url: http://spring-admin-url:8080
+  application:
+    name: video-service
+  jackson:
+    mapper:
+      default-view-inclusion: true
+  main:
+    lazy-initialization: false
+  jmx:
+    enabled: false
+  data:
+    mongodb:
+      uri: mongodb://admin:admin123@mongodb-url:27017
+      database: video
+      auto-index-creation: true
+#  rabbitmq:
+#    host: rabbitmq-url
+#    port: 5672
+#    username: admin
+#    password: admin123
+#  integration:
+#    poller:
+#      initial-delay: 20000
+#      fixed-delay: 10000
+#  cloud:
+#    stream:
+#      default-binder: rabbit
+#      function:
+#        definition: sendMeta
+#      bindings:
+#        sendMeta-out-0:
+#          destination: video.metadata.exchange
+#          required-group: video-metadata-group
+#      rabbit:
+#        bindings:
+#          sendMeta-out-0:
+#            producer:
+#              bindingRoutingKey: video_meta
+#              routingKeyExpression: "'video_meta'"
+#              exchangeType: direct
+#              exchangeAutoDelete: false

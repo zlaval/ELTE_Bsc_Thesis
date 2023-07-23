@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-to-fronted
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: knowhere-ui-url
+                port:
+                  number: 80
+          - path: /.*
+            pathType: Prefix
+            backend:
+              service:
+                name: knowhere-ui-url
+                port:
+                  number: 80
+  ingressClassName: nginx

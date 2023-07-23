@@ -1,0 +1,33 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+commonLabels:
+  environment: development
+
+resources:
+  - ../../base
+
+components:
+  - ../../components/zipkin
+  - ../../components/mongodb
+  - ../../components/rabbitmq
+  - ../../components/postgres
+
+patchesStrategicMerge:
+  - api-gateway/deployment-patch.yaml
+  - auth-service/deployment-patch.yaml
+  - enrollment-service/deployment-patch.yaml
+  - grade-service/deployment-patch.yaml
+  - notification-service/deployment-patch.yaml
+  - quiz-service/deployment-patch.yaml
+  - subject-service/deployment-patch.yaml
+  - video-service/deployment-patch.yaml
+
+configMapGenerator:
+  - name: common-properties
+    envs:
+      - environments.properties
+
+secretGenerator:
+  - name: common-secrets
+    envs:
+      - secrets.properties

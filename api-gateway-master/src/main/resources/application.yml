@@ -1,0 +1,111 @@
+management:
+  server:
+    port: 9000
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+    tags:
+      application: api-gateway
+    enable:
+      all: true
+  tracing:
+    enabled: true
+    baggage:
+      enabled: true
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://zipkin-url:9411/api/v2/spans
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},trace_id=%mdc{traceId} span_id=%mdc{spanId}]"
+  level:
+    root: info
+server:
+  shutdown: graceful
+spring:
+  boot:
+    admin.client.url: http://spring-admin-url:8080
+  application:
+    name: api-gateway
+  main:
+    lazy-initialization: false
+  jmx:
+    enabled: false
+  cloud:
+    gateway:
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+#TODO no cors on prod build
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "http://localhost,http://localhost:8080"
+            allowedHeaders: "*"
+            allowedMethods: "*"
+            allowCredentials: true
+      routes:
+        - id: video-route
+          uri: http://video-service-url:8080
+          predicates:
+            - Path=/video/**
+          filters:
+            - RewritePath=/video/?(?<segment>.*), /$\{segment}
+        - id: auth-route
+          uri: http://auth-service-url:8080
+          predicates:
+            - Path=/auth/**
+          filters:
+            - RewritePath=/auth/?(?<segment>.*), /$\{segment}
+        - id: subject-route
+          uri: http://subject-service-url:8080
+          predicates:
+            - Path=/subject/**
+          filters:
+            - RewritePath=/subject/?(?<segment>.*), /$\{segment}
+        - id: quiz-route
+          uri: http://quiz-service-url:8080
+          predicates:
+            - Path=/quiz/**
+          filters:
+            - RewritePath=/quiz/?(?<segment>.*), /$\{segment}
+        - id: grade-route
+          uri: http://grade-service-url:8080
+          predicates:
+            - Path=/grade/**
+          filters:
+            - RewritePath=/grade/?(?<segment>.*), /$\{segment}
+        - id: enrollment-route
+          uri: http://enrollment-service-url:8080
+          predicates:
+            - Path=/enrollment/**
+          filters:
+            - RewritePath=/enrollment/?(?<segment>.*), /$\{segment}
+        - id: notification-route
+          uri: http://notification-service-url:8080
+          predicates:
+            - Path=/notification/**
+          filters:
+            - RewritePath=/notification/?(?<segment>.*), /$\{segment}
+public:
+  urls:
+    - /login
+    - /register
+    - /resource
+jwt:
+  secret-key: aklsdh983zrhalfnb;iou*rqw/234>asdfa
+  validity-in-minutes: 1440

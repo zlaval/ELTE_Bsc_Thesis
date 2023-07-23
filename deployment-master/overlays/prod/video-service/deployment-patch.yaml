@@ -1,0 +1,16 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: video-service-deployment
+spec:
+  template:
+    spec:
+      containers:
+        - name: video-service
+          volumeMounts:
+            - mountPath: /data
+              name: video-store
+      volumes:
+        - name: video-store
+          persistentVolumeClaim:
+            claimName: video-store-pvc
